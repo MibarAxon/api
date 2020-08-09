@@ -5,10 +5,11 @@ const createError = require('http-errors')
 const logger = require('morgan');
 const glob = require('glob')
 const app = express();
+const MockAPI = require('./mock/api.js')
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false })); //body parser
 
 //manejando manual de CORS
 app.use((req, res, next) => {
@@ -21,7 +22,17 @@ app.use((req, res, next) => {
     next();
 })
 
+if (process.env.NODE_ENV === 'dev') app.use('/mock', MockAPI)
+
 app.use('/login', express.static(path.join(__dirname, 'public')));
+
+//ruta condicional de nuestra app en react, si lo corremos en prod va a servir el bundle estatico, sino a traves del proxy seteado en webpack-dev-server
+if (process.env.NODE_ENV === "prod") {
+    app.use('/web', express.static(path.join(__dirname, 'client', 'build', 'index.html')))
+}
+
+let print = glob.sync('**/*.js', { cwd: `${__dirname}/routes` })
+console.log(print)
 
 //manejo de enrutamiento primario
 const rootRouter = glob.sync('**/*.js', { cwd: `${__dirname}/routes` })
@@ -42,6 +53,7 @@ app.use(function (err, req, res, next) {
     res.locals.error = req.app.get('env') === 'development' ? err : {};
     // render the error page
     res.status(err.status || 500);
+    res.send('pagina no encontrada')
 });
 
 module.exports = app;
