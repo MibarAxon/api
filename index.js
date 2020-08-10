@@ -13,5 +13,5 @@ server.listen(port, err =>
         //si imprimimos el puerto tal cual esta ahi, nos va a dar que estamos en el puerto '0', y no es correcto
 )
 
-browser.openBrowser(server.address().port) //abrimos el browser en el login estatico
+browser.openBrowser(server.address().port) //abrimos el browser con el login estatico en el puerto con el que levantamos el server
 

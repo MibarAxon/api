@@ -15,3 +15,9 @@ document.querySelector("#reveal").addEventListener('click', (e) => {
         ? passwordInput.type = 'text'
         : passwordInput.type = 'password'
 })
+
+document.querySelector('.login-button').addEventListener('click', e => {
+    console.log('seeee')
+    document.querySelector('.login-button').classList.add('login-button--submitted')
+    setTimeout(() => {document.querySelector('.login-button').classList.add('login-button--succeeded')}, 3000) //simulamos un chequeo de 3 segundos de usuario y contrasenia
+})
